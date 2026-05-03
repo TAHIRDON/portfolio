@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { 
   Terminal, Download, Activity, Upload, Thermometer, Droplets, 
   Code, Cpu, Database, Eye, ShieldAlert, Mail, MapPin, 
@@ -71,6 +72,26 @@ const useTypewriter = (words: string[], typingSpeed = 100, deletingSpeed = 50, p
   return text;
 };
 
+// --- Animation Wrapper Component ---
+const Reveal = ({ children, delay = 0, width = "100%" }: { children: React.ReactNode, delay?: number, width?: "fit-content" | "100%" }) => {
+  return (
+    <div style={{ position: "relative", width, overflow: "hidden" }}>
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, y: 75 },
+          visible: { opacity: 1, y: 0 },
+        }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.5, delay: delay }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+};
+
 // --- Components ---
 
 const Navbar = () => {
@@ -85,17 +106,22 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-gray-950/80 backdrop-blur-md border-b border-gray-800 z-50">
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="fixed top-0 w-full bg-gray-950/80 backdrop-blur-md border-b border-gray-800 z-50"
+    >
       <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-        <a href="#" className="font-mono font-bold text-xl text-white tracking-tighter flex items-center gap-2">
-          <Activity className="text-emerald-500" size={24} />
-          <span>Tahir<span className="text-emerald-500">.sys</span></span>
+        <a href="#" className="font-mono font-bold text-xl text-white tracking-tighter flex items-center gap-2 group">
+          <Activity className="text-emerald-500 group-hover:animate-spin transition-all" size={24} />
+          <span>Tahir<span className="text-emerald-500 text-shadow-glow">.sys</span></span>
         </a>
         
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-6 text-sm font-mono text-gray-400">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} className="hover:text-emerald-400 transition-colors">
+            <a key={link.name} href={link.href} className="hover:text-emerald-400 hover:-translate-y-0.5 transition-all">
               {link.name}
             </a>
           ))}
@@ -112,7 +138,11 @@ const Navbar = () => {
 
       {/* Mobile Nav Menu */}
       {isOpen && (
-        <div className="md:hidden bg-gray-900 border-b border-gray-800">
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="md:hidden bg-gray-900 border-b border-gray-800"
+        >
           <div className="flex flex-col px-4 py-4 space-y-4 text-sm font-mono text-gray-400">
             {navLinks.map((link) => (
               <a 
@@ -125,9 +155,9 @@ const Navbar = () => {
               </a>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
-    </nav>
+    </motion.nav>
   );
 };
 
@@ -139,76 +169,129 @@ const Hero = ({ onDownload }: { onDownload: () => void }) => {
       {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
       
+      {/* Animated Glowing Orbs */}
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/20 blur-[120px] rounded-full pointer-events-none"
+      />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.3, 1],
+          opacity: [0.2, 0.4, 0.2],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute top-1/3 right-1/4 translate-x-1/4 -translate-y-1/4 w-[400px] h-[400px] bg-blue-500/20 blur-[100px] rounded-full pointer-events-none"
+      />
+
       <div className="z-10 text-center max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-900 border border-gray-800 mb-8">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-900 border border-gray-800 mb-8 backdrop-blur-sm shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
           <span className="text-sm text-gray-400 font-mono flex items-center gap-2">
             System Online <MapPin size={12} className="ml-1"/> Gujarat, India
           </span>
-        </div>
+        </motion.div>
 
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-          I build <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-emerald-400">intelligent systems</span>,<br/>
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight"
+        >
+          I build <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-emerald-400 to-emerald-500 animate-gradient-x">intelligent systems</span>,<br/>
           not just websites.
-        </h1>
+        </motion.h1>
 
-        <div className="text-xl md:text-2xl text-gray-400 mb-10 font-mono h-12 flex items-center justify-center gap-2">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-xl md:text-2xl text-gray-400 mb-10 font-mono h-12 flex items-center justify-center gap-2"
+        >
           <span className="text-gray-500">&gt; Initializing module:</span> 
-          <span className="text-emerald-400">{typingText}<span className="animate-ping">|</span></span>
-        </div>
+          <span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">{typingText}<span className="animate-ping">|</span></span>
+        </motion.div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="#projects" className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all font-mono">
-            <Terminal size={18} />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center"
+        >
+          <a href="#projects" className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/20 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all duration-300 font-mono group">
+            <Terminal size={18} className="group-hover:animate-pulse" />
             Execute // View Projects
           </a>
           <a 
             href="/resume.pdf" 
             download="Tahir_Miya_Resume.pdf"
             onClick={onDownload} 
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white border border-gray-700 rounded-lg hover:border-gray-500 hover:bg-gray-800 transition-all font-mono"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white border border-gray-700 rounded-lg hover:border-emerald-500/50 hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 font-mono group"
           >
-            <Download size={18} />
+            <Download size={18} className="group-hover:text-emerald-400 transition-colors" />
             Download Resume.pdf
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
 
 const TerminalWindow = ({ title, children }: TerminalWindowProps) => (
-  <div className="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
+  <motion.div 
+    whileHover={{ boxShadow: "0 25px 50px -12px rgba(16,185,129,0.15)" }}
+    className="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden shadow-2xl transition-all duration-500"
+  >
     <div className="bg-gray-900 border-b border-gray-800 px-4 py-2 flex items-center gap-2">
       <div className="flex gap-2">
-        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 cursor-pointer"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-500 cursor-pointer"></div>
+        <div className="w-3 h-3 rounded-full bg-emerald-500/80 hover:bg-emerald-500 cursor-pointer shadow-[0_0_5px_rgba(16,185,129,0.5)]"></div>
       </div>
       <span className="ml-4 text-xs font-mono text-gray-500">{title}</span>
     </div>
-    <div className="p-6">
+    <div className="p-6 relative">
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20"></div>
       {children}
     </div>
-  </div>
+  </motion.div>
 );
 
 const About = () => (
   <section id="about" className="py-20 px-4 max-w-4xl mx-auto pt-24">
-    <TerminalWindow title="user@tahir-sys:~/about_me">
-      <div className="font-mono text-gray-300 space-y-4">
-        <p className="flex gap-2"><span className="text-emerald-500">tahir@sys:~$</span> cat identity.txt</p>
-        <p className="pl-4 text-gray-400">
-          I am a Computer Engineering student specializing in <strong className="text-white">Full Stack Development, AI/ML, and IoT systems</strong>.
-        </p>
-        <p className="flex gap-2 mt-4"><span className="text-emerald-500">tahir@sys:~$</span> ./analyze_mindset.sh</p>
-        <ul className="pl-4 space-y-2 text-gray-400 list-none">
-          <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-blue-500"/> Problem-solving mindset oriented towards real-world impact.</li>
-          <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-blue-500"/> Hands-on project experience bridging hardware and software.</li>
-          <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-blue-500"/> Passionate about deploying intelligent, accessible, and secure systems.</li>
-        </ul>
-      </div>
-    </TerminalWindow>
+    <Reveal>
+      <TerminalWindow title="user@tahir-sys:~/about_me">
+        <div className="font-mono text-gray-300 space-y-4 relative z-10">
+          <p className="flex gap-2"><span className="text-emerald-500">tahir@sys:~$</span> cat identity.txt</p>
+          <p className="pl-4 text-gray-400">
+            I am a Computer Engineering student specializing in <strong className="text-white text-shadow-sm">Full Stack Development, AI/ML, and IoT systems</strong>.
+          </p>
+          <p className="flex gap-2 mt-4"><span className="text-emerald-500">tahir@sys:~$</span> ./analyze_mindset.sh</p>
+          <ul className="pl-4 space-y-3 text-gray-400 list-none">
+            <motion.li initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="flex items-center gap-2 group">
+              <CheckCircle2 size={16} className="text-blue-500 group-hover:text-emerald-400 transition-colors"/> 
+              <span className="group-hover:text-gray-300 transition-colors">Problem-solving mindset oriented towards real-world impact.</span>
+            </motion.li>
+            <motion.li initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="flex items-center gap-2 group">
+              <CheckCircle2 size={16} className="text-blue-500 group-hover:text-emerald-400 transition-colors"/> 
+              <span className="group-hover:text-gray-300 transition-colors">Hands-on project experience bridging hardware and software.</span>
+            </motion.li>
+            <motion.li initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="flex items-center gap-2 group">
+              <CheckCircle2 size={16} className="text-blue-500 group-hover:text-emerald-400 transition-colors"/> 
+              <span className="group-hover:text-gray-300 transition-colors">Passionate about deploying intelligent, accessible, and secure systems.</span>
+            </motion.li>
+          </ul>
+        </div>
+      </TerminalWindow>
+    </Reveal>
   </section>
 );
 
@@ -222,20 +305,29 @@ const Skills = () => {
   ];
 
   return (
-    <section id="skills" className="py-20 px-4 bg-gray-900/50 border-y border-gray-800 pt-24">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-white mb-10 font-mono flex items-center gap-3">
-          <span className="text-emerald-500">#</span> System Capabilities
-        </h2>
+    <section id="skills" className="py-20 px-4 bg-gray-900/50 border-y border-gray-800 pt-24 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto relative z-10">
+        <Reveal>
+          <h2 className="text-3xl font-bold text-white mb-10 font-mono flex items-center gap-3">
+            <span className="text-emerald-500 animate-pulse">#</span> System Capabilities
+          </h2>
+        </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {skillCategories.map((cat, i) => (
-            <div key={i} className="p-6 bg-gray-950 border border-gray-800 rounded-lg hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all group">
-              <div className="flex items-center gap-3 mb-4 text-emerald-400 group-hover:text-emerald-300">
-                {cat.icon}
-                <h3 className="font-mono font-bold">{cat.title}</h3>
-              </div>
-              <p className="text-gray-400 text-sm leading-relaxed">{cat.skills}</p>
-            </div>
+            <Reveal key={i} delay={i * 0.1}>
+              <motion.div 
+                whileHover={{ scale: 1.02, translateY: -5 }}
+                className="p-6 bg-gray-950 border border-gray-800 rounded-lg hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.15)] transition-all group h-full"
+              >
+                <div className="flex items-center gap-3 mb-4 text-emerald-400 group-hover:text-emerald-300">
+                  <div className="p-2 bg-emerald-500/10 rounded-md group-hover:bg-emerald-500/20 transition-colors">
+                    {cat.icon}
+                  </div>
+                  <h3 className="font-mono font-bold">{cat.title}</h3>
+                </div>
+                <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">{cat.skills}</p>
+              </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -244,102 +336,123 @@ const Skills = () => {
 };
 
 const ProjectCard = ({ title, tech, description, features, icon }: ProjectCardProps) => (
-  <div className="bg-gray-950 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all flex flex-col h-full">
+  <motion.div 
+    whileHover={{ y: -8 }}
+    className="bg-gray-950 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all flex flex-col h-full group"
+  >
     <div className="flex items-start justify-between mb-4">
-      <div className="p-3 bg-gray-900 rounded-lg text-blue-400">
+      <div className="p-3 bg-gray-900 rounded-lg text-blue-400 group-hover:scale-110 group-hover:text-blue-300 transition-all duration-300">
         {icon}
       </div>
       <div className="flex gap-2 flex-wrap justify-end max-w-[60%]">
         {tech.map((t, i) => (
-          <span key={i} className="text-[10px] uppercase tracking-wider font-mono px-2 py-1 bg-gray-900 text-gray-400 rounded-md border border-gray-800">
+          <span key={i} className="text-[10px] uppercase tracking-wider font-mono px-2 py-1 bg-gray-900 text-gray-400 rounded-md border border-gray-800 group-hover:border-blue-500/30 transition-colors">
             {t}
           </span>
         ))}
       </div>
     </div>
-    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-    <p className="text-gray-400 text-sm mb-6 flex-grow">{description}</p>
+    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{title}</h3>
+    <p className="text-gray-400 text-sm mb-6 flex-grow group-hover:text-gray-300 transition-colors">{description}</p>
     <div className="space-y-2 mt-auto">
       {features.map((f, i) => (
         <div key={i} className="flex items-start gap-2 text-sm text-gray-300 font-mono">
-          <ChevronRight size={16} className="text-blue-500 shrink-0 mt-0.5" />
+          <ChevronRight size={16} className="text-blue-500 shrink-0 mt-0.5 group-hover:translate-x-1 transition-transform" />
           <span>{f}</span>
         </div>
       ))}
     </div>
-  </div>
+  </motion.div>
 );
 
 const Projects = () => (
   <section id="projects" className="py-20 px-4 max-w-6xl mx-auto pt-24">
-    <h2 className="text-3xl font-bold text-white mb-10 font-mono flex items-center gap-3">
-      <span className="text-blue-500">/</span> Deployed Architectures
-    </h2>
+    <Reveal>
+      <h2 className="text-3xl font-bold text-white mb-10 font-mono flex items-center gap-3">
+        <span className="text-blue-500 animate-pulse">/</span> Deployed Architectures
+      </h2>
+    </Reveal>
+    
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-3">
-        <div className="bg-gradient-to-br from-gray-900 to-gray-950 border border-emerald-500/30 rounded-xl p-1 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-          <div className="absolute top-0 right-0 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg z-10">FEATURED SYSTEM</div>
-          <div className="bg-gray-950 rounded-lg p-6 md:p-8 flex flex-col md:flex-row gap-8">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <Activity className="text-emerald-400" size={28} />
-                <h3 className="text-2xl font-bold text-white">Smart Agro System</h3>
-              </div>
-              <p className="text-gray-400 mb-6">A full-stack agricultural intelligence platform integrating machine learning diagnostics with simulated IoT environmental data.</p>
-              
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800">
-                  <Server size={16} className="text-emerald-500" />
-                  <span>React + Flask Architecture</span>
+      <Reveal delay={0.1}>
+        <div className="lg:col-span-3">
+          <motion.div 
+            whileHover={{ scale: 1.01 }}
+            className="bg-gradient-to-br from-gray-900 to-gray-950 border border-emerald-500/40 rounded-xl p-1 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.15)] group"
+          >
+            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-0 right-0 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg z-10 shadow-[0_0_10px_rgba(16,185,129,0.5)]">FEATURED SYSTEM</div>
+            <div className="bg-gray-950 rounded-lg p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <Activity className="text-emerald-400" size={28} />
+                  <h3 className="text-2xl font-bold text-white">Smart Agro System</h3>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800">
-                  <Cpu size={16} className="text-emerald-500" />
-                  <span>AI Model (.h5) for Leaf Disease Detection</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800">
-                  <Thermometer size={16} className="text-emerald-500" />
-                  <span>Sensor Data Simulation (Temp, Humidity)</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex-1 flex flex-col justify-center bg-gray-900/50 rounded-lg border border-gray-800 p-6 relative">
-               <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-30 rounded-lg"></div>
-               <div className="relative z-10 text-center">
-                  <div className="w-16 h-16 rounded-full border-2 border-dashed border-emerald-500/50 flex items-center justify-center mx-auto mb-4 bg-gray-950 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                    <Upload size={24} className="text-emerald-400" />
+                <p className="text-gray-400 mb-6">A full-stack agricultural intelligence platform integrating machine learning diagnostics with simulated IoT environmental data.</p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                    <Server size={16} className="text-emerald-500" />
+                    <span>React + Flask Architecture</span>
                   </div>
-                  <p className="font-mono text-sm text-emerald-400 mb-2">Image Upload -gt; Prediction Flow</p>
-                  <p className="text-xs text-gray-500">Integrated Crop Health Analysis Dashboard</p>
-               </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                    <Cpu size={16} className="text-emerald-500" />
+                    <span>AI Model (.h5) for Leaf Disease Detection</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                    <Thermometer size={16} className="text-emerald-500" />
+                    <span>Sensor Data Simulation (Temp, Humidity)</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex-1 flex flex-col justify-center bg-gray-900/50 rounded-lg border border-gray-800 p-6 relative overflow-hidden group-hover:border-emerald-500/30 transition-colors">
+                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-30 rounded-lg"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent"></div>
+                 <div className="relative z-10 text-center">
+                    <motion.div 
+                      whileHover={{ scale: 1.1, rotate: 180 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-16 h-16 rounded-full border-2 border-dashed border-emerald-500/50 flex items-center justify-center mx-auto mb-4 bg-gray-950 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                    >
+                      <Upload size={24} className="text-emerald-400" />
+                    </motion.div>
+                    <p className="font-mono text-sm text-emerald-400 mb-2">Image Upload -gt; Prediction Flow</p>
+                    <p className="text-xs text-gray-500">Integrated Crop Health Analysis Dashboard</p>
+                 </div>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </Reveal>
 
-      <ProjectCard 
-        title="Vision-to-Braille System"
-        tech={['Python', 'OpenCV', 'Hardware']}
-        description="Accessibility tool that converts visual input into tangible Braille output for visually impaired users."
-        features={[
-          "Real-time image processing via OpenCV",
-          "Translates text/shapes to tactile signals",
-          "Focus on real-world accessibility"
-        ]}
-        icon={<Eye size={24} />}
-      />
+      <Reveal delay={0.2}>
+        <ProjectCard 
+          title="Vision-to-Braille System"
+          tech={['Python', 'OpenCV', 'Hardware']}
+          description="Accessibility tool that converts visual input into tangible Braille output for visually impaired users."
+          features={[
+            "Real-time image processing via OpenCV",
+            "Translates text/shapes to tactile signals",
+            "Focus on real-world accessibility"
+          ]}
+          icon={<Eye size={24} />}
+        />
+      </Reveal>
 
-      <ProjectCard 
-        title="Malware Detection Engine"
-        tech={['Python', 'ML', 'Security']}
-        description="Email-based security system utilizing pattern filtering to block malicious content."
-        features={[
-          "Pattern-based filtering algorithms",
-          "Automated email content scanning",
-          "Improves endpoint security protocols"
-        ]}
-        icon={<ShieldAlert size={24} />}
-      />
+      <Reveal delay={0.3}>
+        <ProjectCard 
+          title="Malware Detection Engine"
+          tech={['Python', 'ML', 'Security']}
+          description="Email-based security system utilizing pattern filtering to block malicious content."
+          features={[
+            "Pattern-based filtering algorithms",
+            "Automated email content scanning",
+            "Improves endpoint security protocols"
+          ]}
+          icon={<ShieldAlert size={24} />}
+        />
+      </Reveal>
     </div>
   </section>
 );
@@ -358,92 +471,107 @@ const InteractiveDemo = () => {
   const reset = () => setStatus('idle');
 
   return (
-    <section id="demo" className="py-20 px-4 bg-gray-900 border-y border-gray-800 pt-24">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4 font-mono">Try My AI Model</h2>
-          <p className="text-gray-400">Live simulation of the Smart Agro diagnostic pipeline.</p>
-        </div>
-
-        <div className="bg-gray-950 border border-gray-800 rounded-xl p-6 md:p-8 shadow-2xl">
-          <div className="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
-            <h3 className="text-lg text-white font-mono flex items-center gap-2">
-              <Activity className="text-blue-500" />
-              Smart Agro // Diagnostic Module
-            </h3>
-            <span className="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full font-mono animate-pulse">
-              Simulation Active
-            </span>
+    <section id="demo" className="py-20 px-4 bg-gray-900 border-y border-gray-800 pt-24 relative">
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-blue-500/5 blur-[150px] pointer-events-none"></div>
+      <div className="max-w-4xl mx-auto relative z-10">
+        <Reveal>
+          <div className="mb-10 text-center">
+            <h2 className="text-3xl font-bold text-white mb-4 font-mono">Try My AI Model</h2>
+            <p className="text-gray-400">Live simulation of the Smart Agro diagnostic pipeline.</p>
           </div>
+        </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div 
-              onClick={handleUpload}
-              className={`border-2 border-dashed rounded-lg p-12 flex flex-col items-center justify-center text-center transition-all ${status === 'idle' ? 'border-gray-700 cursor-pointer hover:border-emerald-500 hover:bg-emerald-500/5' : 'border-gray-800 bg-gray-900/50 cursor-not-allowed'}`}
-            >
-              {status === 'idle' && (
-                <>
-                  <Upload className="mb-4 text-gray-500" size={32} />
-                  <p className="text-gray-300 font-mono text-sm mb-2">Click to upload leaf image</p>
-                  <p className="text-xs text-gray-600">Simulates passing image to Flask backend</p>
-                </>
-              )}
-              {status === 'processing' && (
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 border-4 border-gray-800 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
-                  <p className="text-emerald-400 font-mono text-sm animate-pulse">Processing via OpenCV...</p>
-                </div>
-              )}
-              {status === 'done' && (
-                <div className="flex flex-col items-center">
-                  <CheckCircle2 className="mb-4 text-emerald-500" size={32} />
-                  <p className="text-emerald-400 font-mono text-sm mb-4">Analysis Complete</p>
-                  <button onClick={(e) => { e.stopPropagation(); reset(); }} className="text-xs bg-gray-800 px-3 py-1 rounded hover:bg-gray-700 text-white">Reset Demo</button>
-                </div>
-              )}
+        <Reveal delay={0.2}>
+          <div className="bg-gray-950 border border-gray-800 rounded-xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+            {status === 'processing' && (
+              <motion.div 
+                initial={{ left: '-100%' }}
+                animate={{ left: '200%' }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="absolute top-0 w-1/2 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-50 z-20"
+              />
+            )}
+
+            <div className="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+              <h3 className="text-lg text-white font-mono flex items-center gap-2">
+                <Activity className="text-blue-500" />
+                Smart Agro // Diagnostic Module
+              </h3>
+              <span className="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full font-mono animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                Simulation Active
+              </span>
             </div>
 
-            <div className="bg-black border border-gray-800 rounded-lg p-6 font-mono text-sm flex flex-col justify-center relative overflow-hidden min-h-[200px]">
-               <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10"></div>
-
-              {status === 'idle' && (
-                <div className="text-gray-600 flex items-center gap-2 relative z-20">
-                  <span className="w-2 h-2 bg-gray-600 rounded-full"></span> Awaiting telemetry...
-                </div>
-              )}
-              
-              {status === 'processing' && (
-                <div className="text-blue-400 space-y-2 relative z-20">
-                  <p>&gt; Initializing TensorFlow backend...</p>
-                  <p className="animate-pulse">&gt; Running .h5 model inference...</p>
-                  <p>&gt; Fetching IoT sensor data...</p>
-                </div>
-              )}
-
-              {status === 'done' && (
-                <div className="space-y-4 relative z-20">
-                  <div className="text-emerald-500 pb-2 border-b border-gray-800">&gt; Results Generated</div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-gray-500 text-xs mb-1">Crop Health</p>
-                      <p className="text-white text-lg">87.4%</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs mb-1">Diagnosis</p>
-                      <p className="text-red-400 text-lg">Early Blight</p>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <motion.div 
+                onClick={handleUpload}
+                whileHover={status === 'idle' ? { scale: 1.02 } : {}}
+                className={`border-2 border-dashed rounded-lg p-12 flex flex-col items-center justify-center text-center transition-all ${status === 'idle' ? 'border-gray-700 cursor-pointer hover:border-emerald-500 hover:bg-emerald-500/5 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]' : 'border-gray-800 bg-gray-900/50 cursor-not-allowed'}`}
+              >
+                {status === 'idle' && (
+                  <>
+                    <Upload className="mb-4 text-gray-500 group-hover:text-emerald-400 transition-colors" size={32} />
+                    <p className="text-gray-300 font-mono text-sm mb-2">Click to upload leaf image</p>
+                    <p className="text-xs text-gray-600">Simulates passing image to Flask backend</p>
+                  </>
+                )}
+                {status === 'processing' && (
+                  <div className="flex flex-col items-center">
+                    <div className="w-10 h-10 border-4 border-gray-800 border-t-emerald-500 rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div>
+                    <p className="text-emerald-400 font-mono text-sm animate-pulse">Processing via OpenCV...</p>
                   </div>
-                  
-                  <div className="mt-4 pt-4 border-t border-gray-800 bg-gray-900/50 p-3 rounded flex justify-between text-gray-400">
-                     <span className="flex items-center gap-2 text-xs"><Thermometer size={14} className="text-orange-500"/> 28.5°C</span>
-                     <span className="flex items-center gap-2 text-xs"><Droplets size={14} className="text-blue-500"/> 64% Hum</span>
+                )}
+                {status === 'done' && (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex flex-col items-center">
+                    <CheckCircle2 className="mb-4 text-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]" size={32} />
+                    <p className="text-emerald-400 font-mono text-sm mb-4">Analysis Complete</p>
+                    <button onClick={(e) => { e.stopPropagation(); reset(); }} className="text-xs bg-gray-800 px-3 py-1 rounded hover:bg-gray-700 text-white transition-colors border border-gray-700 hover:border-gray-500">Reset Demo</button>
+                  </motion.div>
+                )}
+              </motion.div>
+
+              <div className="bg-black border border-gray-800 rounded-lg p-6 font-mono text-sm flex flex-col justify-center relative overflow-hidden min-h-[200px]">
+                 <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10"></div>
+
+                {status === 'idle' && (
+                  <div className="text-gray-600 flex items-center gap-2 relative z-20">
+                    <span className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></span> Awaiting telemetry...
                   </div>
-                </div>
-              )}
+                )}
+                
+                {status === 'processing' && (
+                  <div className="text-blue-400 space-y-2 relative z-20">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>&gt; Initializing TensorFlow backend...</motion.p>
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="animate-pulse">&gt; Running .h5 model inference...</motion.p>
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>&gt; Fetching IoT sensor data...</motion.p>
+                  </div>
+                )}
+
+                {status === 'done' && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 relative z-20">
+                    <div className="text-emerald-500 pb-2 border-b border-gray-800">&gt; Results Generated</div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
+                        <p className="text-gray-500 text-xs mb-1">Crop Health</p>
+                        <p className="text-white text-lg font-bold">87.4%</p>
+                      </motion.div>
+                      <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
+                        <p className="text-gray-500 text-xs mb-1">Diagnosis</p>
+                        <p className="text-red-400 text-lg font-bold">Early Blight</p>
+                      </motion.div>
+                    </div>
+                    
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-4 pt-4 border-t border-gray-800 bg-gray-900/50 p-3 rounded flex justify-between text-gray-400">
+                       <span className="flex items-center gap-2 text-xs"><Thermometer size={14} className="text-orange-500 animate-pulse"/> 28.5°C</span>
+                       <span className="flex items-center gap-2 text-xs"><Droplets size={14} className="text-blue-500 animate-pulse"/> 64% Hum</span>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -453,39 +581,47 @@ const EducationTimeline = () => {
   return (
     <section className="py-20 px-4 max-w-4xl mx-auto pt-24">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-8 font-mono border-b border-gray-800 pb-4">Education</h2>
-          <div className="bg-gray-950 border border-gray-800 p-6 rounded-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full"></div>
-            <h3 className="text-xl font-bold text-white mb-2">MBIT</h3>
-            <p className="text-emerald-400 font-mono text-sm mb-4">Computer Engineering</p>
-            <div className="flex gap-4 mb-4 text-sm">
-              <span className="bg-gray-900 text-gray-300 px-3 py-1 rounded border border-gray-800">CGPA: <strong className="text-white">8.82</strong></span>
-              <span className="bg-gray-900 text-gray-300 px-3 py-1 rounded border border-gray-800">Minor: <strong className="text-blue-400">IoT</strong></span>
-            </div>
+        <Reveal>
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-8 font-mono border-b border-gray-800 pb-4">Education</h2>
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="bg-gray-950 border border-gray-800 p-6 rounded-lg relative overflow-hidden shadow-xl"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full blur-xl"></div>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full"></div>
+              <h3 className="text-xl font-bold text-white mb-2 relative z-10">MBIT</h3>
+              <p className="text-emerald-400 font-mono text-sm mb-4 relative z-10">Computer Engineering</p>
+              <div className="flex gap-4 mb-4 text-sm relative z-10">
+                <span className="bg-gray-900 text-gray-300 px-3 py-1 rounded border border-gray-800 shadow-inner">CGPA: <strong className="text-white">8.82</strong></span>
+                <span className="bg-gray-900 text-gray-300 px-3 py-1 rounded border border-gray-800 shadow-inner">Minor: <strong className="text-blue-400">IoT</strong></span>
+              </div>
+            </motion.div>
           </div>
-        </div>
+        </Reveal>
 
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-8 font-mono border-b border-gray-800 pb-4">System Growth</h2>
-          <div className="relative border-l border-gray-800 ml-3 space-y-8">
-            <div className="relative pl-6">
-              <div className="absolute w-3 h-3 bg-gray-600 rounded-full -left-[6.5px] top-1.5 border-2 border-gray-950"></div>
-              <h4 className="text-white font-bold">Programming Fundamentals</h4>
-              <p className="text-sm text-gray-500 mt-1">Mastered core languages and algorithms.</p>
-            </div>
-            <div className="relative pl-6">
-              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[6.5px] top-1.5 border-2 border-gray-950 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
-              <h4 className="text-white font-bold">AI & Hardware Integration</h4>
-              <p className="text-sm text-gray-500 mt-1">Built ML models and integrated ESP microcontrollers.</p>
-            </div>
-            <div className="relative pl-6">
-              <div className="absolute w-3 h-3 bg-emerald-500 rounded-full -left-[6.5px] top-1.5 border-2 border-gray-950 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-              <h4 className="text-white font-bold">Full System Architecture</h4>
-              <p className="text-sm text-gray-500 mt-1">Deploying end-to-end intelligent systems.</p>
+        <Reveal delay={0.2}>
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-8 font-mono border-b border-gray-800 pb-4">System Growth</h2>
+            <div className="relative border-l border-gray-800 ml-3 space-y-8">
+              <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }} className="relative pl-6 group">
+                <div className="absolute w-3 h-3 bg-gray-600 rounded-full -left-[6.5px] top-1.5 border-2 border-gray-950 group-hover:bg-gray-400 transition-colors"></div>
+                <h4 className="text-white font-bold group-hover:text-emerald-400 transition-colors">Programming Fundamentals</h4>
+                <p className="text-sm text-gray-500 mt-1">Mastered core languages and algorithms.</p>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} viewport={{ once: true }} className="relative pl-6 group">
+                <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[6.5px] top-1.5 border-2 border-gray-950 shadow-[0_0_10px_rgba(59,130,246,0.5)] group-hover:bg-blue-400 transition-colors"></div>
+                <h4 className="text-white font-bold group-hover:text-blue-400 transition-colors">AI & Hardware Integration</h4>
+                <p className="text-sm text-gray-500 mt-1">Built ML models and integrated ESP microcontrollers.</p>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} viewport={{ once: true }} className="relative pl-6 group">
+                <div className="absolute w-3 h-3 bg-emerald-500 rounded-full -left-[6.5px] top-1.5 border-2 border-gray-950 shadow-[0_0_15px_rgba(16,185,129,0.8)] group-hover:bg-emerald-400 transition-colors"></div>
+                <h4 className="text-white font-bold group-hover:text-emerald-400 transition-colors">Full System Architecture</h4>
+                <p className="text-sm text-gray-500 mt-1">Deploying end-to-end intelligent systems.</p>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -507,81 +643,88 @@ const ContactSection = ({ showToast }: { showToast: (msg: string) => void }) => 
 
   return (
     <section id="contact" className="py-20 px-4 max-w-4xl mx-auto border-t border-gray-800 pt-24">
-      <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold text-white mb-4 font-mono flex items-center justify-center gap-3">
-           Establish Connection
-        </h2>
-        <p className="text-gray-400">Open a secure channel to discuss projects or opportunities.</p>
-      </div>
+      <Reveal>
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4 font-mono flex items-center justify-center gap-3">
+             Establish Connection
+          </h2>
+          <p className="text-gray-400">Open a secure channel to discuss projects or opportunities.</p>
+        </div>
+      </Reveal>
       
-      <TerminalWindow title="user@tahir-sys:~/secure_comms">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-400 font-mono text-sm mb-2 flex items-center gap-2">&gt; client_name</label>
-              <input 
-                type="text" 
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-emerald-500 focus:outline-none transition-colors font-mono text-sm placeholder-gray-600"
-                placeholder="Enter your name"
-              />
+      <Reveal delay={0.2}>
+        <TerminalWindow title="user@tahir-sys:~/secure_comms">
+          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="group">
+                <label className="block text-gray-400 font-mono text-sm mb-2 flex items-center gap-2 group-hover:text-emerald-400 transition-colors">&gt; client_name</label>
+                <input 
+                  type="text" 
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-mono text-sm placeholder-gray-600 hover:border-gray-500"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div className="group">
+                <label className="block text-gray-400 font-mono text-sm mb-2 flex items-center gap-2 group-hover:text-emerald-400 transition-colors">&gt; return_address</label>
+                <input 
+                  type="email" 
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-mono text-sm placeholder-gray-600 hover:border-gray-500"
+                  placeholder="Enter your email"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-gray-400 font-mono text-sm mb-2 flex items-center gap-2">&gt; return_address</label>
-              <input 
-                type="email" 
+            <div className="group">
+              <label className="block text-gray-400 font-mono text-sm mb-2 flex items-center gap-2 group-hover:text-emerald-400 transition-colors">&gt; payload_data</label>
+              <textarea 
                 required
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-emerald-500 focus:outline-none transition-colors font-mono text-sm placeholder-gray-600"
-                placeholder="Enter your email"
-              />
+                rows={4}
+                value={formData.message}
+                onChange={(e) => setFormData({...formData, message: e.target.value})}
+                className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-mono text-sm resize-none placeholder-gray-600 hover:border-gray-500"
+                placeholder="Type your message here..."
+              ></textarea>
             </div>
-          </div>
-          <div>
-            <label className="block text-gray-400 font-mono text-sm mb-2 flex items-center gap-2">&gt; payload_data</label>
-            <textarea 
-              required
-              rows={4}
-              value={formData.message}
-              onChange={(e) => setFormData({...formData, message: e.target.value})}
-              className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-emerald-500 focus:outline-none transition-colors font-mono text-sm resize-none placeholder-gray-600"
-              placeholder="Type your message here..."
-            ></textarea>
-          </div>
-          <button 
-            type="submit" 
-            disabled={isSending}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded font-mono text-sm transition-all ${isSending ? 'bg-gray-800 text-gray-400 cursor-not-allowed' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]'}`}
-          >
-            {isSending ? (
-              <><span className="animate-spin w-4 h-4 border-2 border-gray-400 border-t-emerald-500 rounded-full"></span> Transmitting...</>
-            ) : (
-              <><Send size={16} /> Transmit Payload</>
-            )}
-          </button>
-        </form>
-      </TerminalWindow>
+            <motion.button 
+              whileHover={!isSending ? { scale: 1.01 } : {}}
+              whileTap={!isSending ? { scale: 0.98 } : {}}
+              type="submit" 
+              disabled={isSending}
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded font-mono text-sm transition-all ${isSending ? 'bg-gray-800 text-gray-400 cursor-not-allowed' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500/20 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]'}`}
+            >
+              {isSending ? (
+                <><span className="animate-spin w-4 h-4 border-2 border-gray-400 border-t-emerald-500 rounded-full"></span> Transmitting...</>
+              ) : (
+                <><Send size={16} /> Transmit Payload</>
+              )}
+            </motion.button>
+          </form>
+        </TerminalWindow>
+      </Reveal>
     </section>
   );
 };
 
 const Footer = () => (
-  <footer className="bg-black py-8 border-t border-gray-900 text-center">
-    <div className="flex justify-center gap-6 mb-6">
-      <a href="mailto:contact@example.com" className="text-gray-500 hover:text-emerald-400 hover:scale-110 transition-all">
+  <footer className="bg-black py-8 border-t border-gray-900 text-center relative overflow-hidden">
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-emerald-500/5 blur-[50px] pointer-events-none"></div>
+    <div className="flex justify-center gap-6 mb-6 relative z-10">
+      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="mailto:contact@example.com" className="text-gray-500 hover:text-emerald-400 transition-colors">
         <Mail size={22} />
-      </a>
-      <a href="https://github.com" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-white hover:scale-110 transition-all">
+      </motion.a>
+      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="https://github.com" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-white transition-colors">
         <GithubIcon size={22} />
-      </a>
-      <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-blue-500 hover:scale-110 transition-all">
+      </motion.a>
+      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-blue-500 transition-colors">
         <LinkedinIcon size={22} />
-      </a>
+      </motion.a>
     </div>
-    <p className="text-gray-600 text-xs font-mono flex items-center justify-center gap-2">
+    <p className="text-gray-600 text-xs font-mono flex items-center justify-center gap-2 relative z-10">
       <Terminal size={12}/> Engineered by Tahir Miya. All systems nominal.
     </p>
   </footer>
@@ -604,7 +747,7 @@ export default function App() {
       <Navbar />
       
       <div 
-        className={`fixed bottom-6 right-6 z-50 bg-gray-900 border border-emerald-500/50 text-emerald-400 px-4 py-3 rounded shadow-[0_0_20px_rgba(16,185,129,0.25)] font-mono text-sm flex items-center gap-3 transition-all duration-300 transform ${toast.show ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0 pointer-events-none'}`}
+        className={`fixed bottom-6 right-6 z-50 bg-gray-900 border border-emerald-500/50 text-emerald-400 px-4 py-3 rounded shadow-[0_0_20px_rgba(16,185,129,0.25)] font-mono text-sm flex items-center gap-3 transition-all duration-300 transform ${toast.show ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-12 opacity-0 scale-95 pointer-events-none'}`}
       >
         <Activity size={18} className="animate-pulse" />
         {toast.message}

@@ -6,15 +6,34 @@ import {
   ChevronRight, CheckCircle2, Server, Menu, X, Send
 } from 'lucide-react';
 
+// --- Types & Interfaces ---
+interface IconProps {
+  size?: number;
+  className?: string;
+}
+
+interface ProjectCardProps {
+  title: string;
+  tech: string[];
+  description: string;
+  features: string[];
+  icon: React.ReactNode;
+}
+
+interface TerminalWindowProps {
+  title: string;
+  children: React.ReactNode;
+}
+
 // --- Custom Brand Icons ---
-const GithubIcon = ({ size = 24, className = "" }) => (
+const GithubIcon = ({ size = 24, className = "" }: IconProps) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.48-1.54 6.48-7.1a5.08 5.08 0 0 0-1.38-3.5 4.7 4.7 0 0 0-.13-3.4s-1.1-.35-3.5 1.25a11.7 11.7 0 0 0-6.2 0C6.1 2.8 5 3.15 5 3.15a4.7 4.7 0 0 0-.13 3.4A5.08 5.08 0 0 0 3.5 10c0 5.54 3.34 6.74 6.48 7.1a4.8 4.8 0 0 0-1 3.02V22"/>
     <path d="M9 20c-5 1.5-5-2.5-7-3"/>
   </svg>
 );
 
-const LinkedinIcon = ({ size = 24, className = "" }) => (
+const LinkedinIcon = ({ size = 24, className = "" }: IconProps) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
     <rect x="2" y="9" width="4" height="12"/>
@@ -23,7 +42,7 @@ const LinkedinIcon = ({ size = 24, className = "" }) => (
 );
 
 // --- Custom Hooks ---
-const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime = 2000) => {
+const useTypewriter = (words: string[], typingSpeed = 100, deletingSpeed = 50, pauseTime = 2000) => {
   const [text, setText] = useState('');
   const [wordIndex, setWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -112,7 +131,7 @@ const Navbar = () => {
   );
 };
 
-const Hero = ({ onDownload }) => {
+const Hero = ({ onDownload }: { onDownload: () => void }) => {
   const typingText = useTypewriter(['AI Systems', 'IoT Solutions', 'Full Stack Apps']);
 
   return (
@@ -143,17 +162,22 @@ const Hero = ({ onDownload }) => {
             <Terminal size={18} />
             Execute // View Projects
           </a>
-          <button onClick={onDownload} className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white border border-gray-700 rounded-lg hover:border-gray-500 hover:bg-gray-800 transition-all font-mono">
+          <a 
+            href="/resume.pdf" 
+            download="Tahir_Miya_Resume.pdf"
+            onClick={onDownload} 
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white border border-gray-700 rounded-lg hover:border-gray-500 hover:bg-gray-800 transition-all font-mono"
+          >
             <Download size={18} />
             Download Resume.pdf
-          </button>
+          </a>
         </div>
       </div>
     </section>
   );
 };
 
-const TerminalWindow = ({ title, children }) => (
+const TerminalWindow = ({ title, children }: TerminalWindowProps) => (
   <div className="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
     <div className="bg-gray-900 border-b border-gray-800 px-4 py-2 flex items-center gap-2">
       <div className="flex gap-2">
@@ -219,7 +243,7 @@ const Skills = () => {
   );
 };
 
-const ProjectCard = ({ title, tech, description, features, icon }) => (
+const ProjectCard = ({ title, tech, description, features, icon }: ProjectCardProps) => (
   <div className="bg-gray-950 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all flex flex-col h-full">
     <div className="flex items-start justify-between mb-4">
       <div className="p-3 bg-gray-900 rounded-lg text-blue-400">
@@ -321,7 +345,7 @@ const Projects = () => (
 );
 
 const InteractiveDemo = () => {
-  const [status, setStatus] = useState('idle'); // idle, processing, done
+  const [status, setStatus] = useState('idle');
 
   const handleUpload = () => {
     if (status !== 'idle') return;
@@ -353,7 +377,6 @@ const InteractiveDemo = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Upload Area */}
             <div 
               onClick={handleUpload}
               className={`border-2 border-dashed rounded-lg p-12 flex flex-col items-center justify-center text-center transition-all ${status === 'idle' ? 'border-gray-700 cursor-pointer hover:border-emerald-500 hover:bg-emerald-500/5' : 'border-gray-800 bg-gray-900/50 cursor-not-allowed'}`}
@@ -380,9 +403,7 @@ const InteractiveDemo = () => {
               )}
             </div>
 
-            {/* Dashboard Readout */}
             <div className="bg-black border border-gray-800 rounded-lg p-6 font-mono text-sm flex flex-col justify-center relative overflow-hidden min-h-[200px]">
-               {/* Terminal scanline effect */}
                <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10"></div>
 
               {status === 'idle' && (
@@ -432,7 +453,6 @@ const EducationTimeline = () => {
   return (
     <section className="py-20 px-4 max-w-4xl mx-auto pt-24">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Education */}
         <div>
           <h2 className="text-2xl font-bold text-white mb-8 font-mono border-b border-gray-800 pb-4">Education</h2>
           <div className="bg-gray-950 border border-gray-800 p-6 rounded-lg relative overflow-hidden">
@@ -446,7 +466,6 @@ const EducationTimeline = () => {
           </div>
         </div>
 
-        {/* Timeline */}
         <div>
           <h2 className="text-2xl font-bold text-white mb-8 font-mono border-b border-gray-800 pb-4">System Growth</h2>
           <div className="relative border-l border-gray-800 ml-3 space-y-8">
@@ -472,14 +491,13 @@ const EducationTimeline = () => {
   );
 };
 
-const ContactSection = ({ showToast }) => {
+const ContactSection = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSending(true);
-    // Simulate Network/API delay
     setTimeout(() => {
       setIsSending(false);
       showToast("Payload transmitted successfully. Awaiting response.");
@@ -572,21 +590,19 @@ const Footer = () => (
 export default function App() {
   const [toast, setToast] = useState({ show: false, message: '' });
 
-  const showToast = (message) => {
+  const showToast = (message: string) => {
     setToast({ show: true, message });
-    // Auto-hide after 3.5s
     setTimeout(() => setToast({ show: false, message: '' }), 3500);
   };
 
   const handleDownload = () => {
-    showToast("Downloading Resume.pdf... (Simulation)");
+    showToast("Downloading Resume...");
   };
 
   return (
     <div className="bg-black min-h-screen text-slate-300 selection:bg-emerald-500/30 selection:text-emerald-200 font-sans scroll-smooth relative">
       <Navbar />
       
-      {/* Global System Toast Notification */}
       <div 
         className={`fixed bottom-6 right-6 z-50 bg-gray-900 border border-emerald-500/50 text-emerald-400 px-4 py-3 rounded shadow-[0_0_20px_rgba(16,185,129,0.25)] font-mono text-sm flex items-center gap-3 transition-all duration-300 transform ${toast.show ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0 pointer-events-none'}`}
       >

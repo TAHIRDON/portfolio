@@ -26,6 +26,13 @@ interface TerminalWindowProps {
   children: React.ReactNode;
 }
 
+interface RevealProps {
+  children: React.ReactNode;
+  delay?: number;
+  width?: "fit-content" | "100%";
+  className?: string;
+}
+
 // --- Custom Brand Icons ---
 const GithubIcon = ({ size = 24, className = "" }: IconProps) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -73,9 +80,9 @@ const useTypewriter = (words: string[], typingSpeed = 100, deletingSpeed = 50, p
 };
 
 // --- Animation Wrapper Component ---
-const Reveal = ({ children, delay = 0, width = "100%" }: { children: React.ReactNode, delay?: number, width?: "fit-content" | "100%" }) => {
+const Reveal = ({ children, delay = 0, width = "100%", className = "" }: RevealProps) => {
   return (
-    <div style={{ position: "relative", width, overflow: "hidden" }}>
+    <div className={className} style={{ position: "relative", width, overflow: "hidden" }}>
       <motion.div
         variants={{
           hidden: { opacity: 0, y: 75 },
@@ -266,7 +273,7 @@ const TerminalWindow = ({ title, children }: TerminalWindowProps) => (
 );
 
 const About = () => (
-  <section id="about" className="py-20 px-4 max-w-4xl mx-auto pt-24">
+  <section id="about" className="py-24 px-4 max-w-4xl mx-auto scroll-mt-28">
     <Reveal>
       <TerminalWindow title="user@tahir-sys:~/about_me">
         <div className="font-mono text-gray-300 space-y-4 relative z-10">
@@ -305,7 +312,7 @@ const Skills = () => {
   ];
 
   return (
-    <section id="skills" className="py-20 px-4 bg-gray-900/50 border-y border-gray-800 pt-24 relative overflow-hidden">
+    <section id="skills" className="py-24 px-4 bg-gray-900/50 border-y border-gray-800 relative overflow-hidden scroll-mt-28">
       <div className="max-w-6xl mx-auto relative z-10">
         <Reveal>
           <h2 className="text-3xl font-bold text-white mb-10 font-mono flex items-center gap-3">
@@ -366,7 +373,7 @@ const ProjectCard = ({ title, tech, description, features, icon }: ProjectCardPr
 );
 
 const Projects = () => (
-  <section id="projects" className="py-20 px-4 max-w-6xl mx-auto pt-24">
+  <section id="projects" className="py-24 px-4 max-w-6xl mx-auto scroll-mt-28">
     <Reveal>
       <h2 className="text-3xl font-bold text-white mb-10 font-mono flex items-center gap-3">
         <span className="text-blue-500 animate-pulse">/</span> Deployed Architectures
@@ -374,56 +381,54 @@ const Projects = () => (
     </Reveal>
     
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <Reveal delay={0.1}>
-        <div className="lg:col-span-3">
-          <motion.div 
-            whileHover={{ scale: 1.01 }}
-            className="bg-gradient-to-br from-gray-900 to-gray-950 border border-emerald-500/40 rounded-xl p-1 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.15)] group"
-          >
-            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="absolute top-0 right-0 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg z-10 shadow-[0_0_10px_rgba(16,185,129,0.5)]">FEATURED SYSTEM</div>
-            <div className="bg-gray-950 rounded-lg p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <Activity className="text-emerald-400" size={28} />
-                  <h3 className="text-2xl font-bold text-white">Smart Agro System</h3>
-                </div>
-                <p className="text-gray-400 mb-6">A full-stack agricultural intelligence platform integrating machine learning diagnostics with simulated IoT environmental data.</p>
-                
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
-                    <Server size={16} className="text-emerald-500" />
-                    <span>React + Flask Architecture</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
-                    <Cpu size={16} className="text-emerald-500" />
-                    <span>AI Model (.h5) for Leaf Disease Detection</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
-                    <Thermometer size={16} className="text-emerald-500" />
-                    <span>Sensor Data Simulation (Temp, Humidity)</span>
-                  </div>
-                </div>
+      <Reveal delay={0.1} className="lg:col-span-3">
+        <motion.div 
+          whileHover={{ scale: 1.01 }}
+          className="bg-gradient-to-br from-gray-900 to-gray-950 border border-emerald-500/40 rounded-xl p-1 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.15)] group"
+        >
+          <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute top-0 right-0 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg z-10 shadow-[0_0_10px_rgba(16,185,129,0.5)]">FEATURED SYSTEM</div>
+          <div className="bg-gray-950 rounded-lg p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <Activity className="text-emerald-400" size={28} />
+                <h3 className="text-2xl font-bold text-white">Smart Agro System</h3>
               </div>
+              <p className="text-gray-400 mb-6">A full-stack agricultural intelligence platform integrating machine learning diagnostics with simulated IoT environmental data.</p>
               
-              <div className="flex-1 flex flex-col justify-center bg-gray-900/50 rounded-lg border border-gray-800 p-6 relative overflow-hidden group-hover:border-emerald-500/30 transition-colors">
-                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-30 rounded-lg"></div>
-                 <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent"></div>
-                 <div className="relative z-10 text-center">
-                    <motion.div 
-                      whileHover={{ scale: 1.1, rotate: 180 }}
-                      transition={{ duration: 0.5 }}
-                      className="w-16 h-16 rounded-full border-2 border-dashed border-emerald-500/50 flex items-center justify-center mx-auto mb-4 bg-gray-950 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
-                    >
-                      <Upload size={24} className="text-emerald-400" />
-                    </motion.div>
-                    <p className="font-mono text-sm text-emerald-400 mb-2">Image Upload -gt; Prediction Flow</p>
-                    <p className="text-xs text-gray-500">Integrated Crop Health Analysis Dashboard</p>
-                 </div>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                  <Server size={16} className="text-emerald-500" />
+                  <span>React + Flask Architecture</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                  <Cpu size={16} className="text-emerald-500" />
+                  <span>AI Model (.h5) for Leaf Disease Detection</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                  <Thermometer size={16} className="text-emerald-500" />
+                  <span>Sensor Data Simulation (Temp, Humidity)</span>
+                </div>
               </div>
             </div>
-          </motion.div>
-        </div>
+            
+            <div className="flex-1 flex flex-col justify-center bg-gray-900/50 rounded-lg border border-gray-800 p-6 relative overflow-hidden group-hover:border-emerald-500/30 transition-colors">
+               <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-30 rounded-lg"></div>
+               <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent"></div>
+               <div className="relative z-10 text-center">
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: 180 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-16 h-16 rounded-full border-2 border-dashed border-emerald-500/50 flex items-center justify-center mx-auto mb-4 bg-gray-950 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                  >
+                    <Upload size={24} className="text-emerald-400" />
+                  </motion.div>
+                  <p className="font-mono text-sm text-emerald-400 mb-2">Image Upload → Prediction Flow</p>
+                  <p className="text-xs text-gray-500">Integrated Crop Health Analysis Dashboard</p>
+               </div>
+            </div>
+          </div>
+        </motion.div>
       </Reveal>
 
       <Reveal delay={0.2}>
@@ -471,7 +476,7 @@ const InteractiveDemo = () => {
   const reset = () => setStatus('idle');
 
   return (
-    <section id="demo" className="py-20 px-4 bg-gray-900 border-y border-gray-800 pt-24 relative">
+    <section id="demo" className="py-24 px-4 bg-gray-900 border-y border-gray-800 relative scroll-mt-28">
       <div className="absolute top-0 right-0 w-1/3 h-full bg-blue-500/5 blur-[150px] pointer-events-none"></div>
       <div className="max-w-4xl mx-auto relative z-10">
         <Reveal>
@@ -579,7 +584,7 @@ const InteractiveDemo = () => {
 
 const EducationTimeline = () => {
   return (
-    <section className="py-20 px-4 max-w-4xl mx-auto pt-24">
+    <section className="py-24 px-4 max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         <Reveal>
           <div>
@@ -642,7 +647,7 @@ const ContactSection = ({ showToast }: { showToast: (msg: string) => void }) => 
   };
 
   return (
-    <section id="contact" className="py-20 px-4 max-w-4xl mx-auto border-t border-gray-800 pt-24">
+    <section id="contact" className="py-24 px-4 max-w-4xl mx-auto border-t border-gray-800 scroll-mt-28">
       <Reveal>
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold text-white mb-4 font-mono flex items-center justify-center gap-3">

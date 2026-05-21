@@ -82,10 +82,11 @@ const useTypewriter = (words: string[], typingSpeed = 100, deletingSpeed = 50, p
 // --- Animation Wrapper Component ---
 const Reveal = ({ children, delay = 0, width = "100%", className = "" }: RevealProps) => {
   return (
-    <div className={className} style={{ position: "relative", width, overflow: "hidden" }}>
+    // Removed overflow-hidden to prevent clipping of shadows and badges on desktop
+    <div className={className} style={{ position: "relative", width }}>
       <motion.div
         variants={{
-          hidden: { opacity: 0, y: 75 },
+          hidden: { opacity: 0, y: 50 },
           visible: { opacity: 1, y: 0 },
         }}
         initial="hidden"
@@ -352,16 +353,21 @@ const ProjectCard = ({ title, tech, description, features, icon }: ProjectCardPr
       <div className="p-3 bg-gray-900 rounded-lg text-blue-400 group-hover:scale-110 group-hover:text-blue-300 transition-all duration-300">
         {icon}
       </div>
-      <div className="flex gap-2 flex-wrap justify-end max-w-[60%]">
-        {tech.map((t, i) => (
-          <span key={i} className="text-[10px] uppercase tracking-wider font-mono px-2 py-1 bg-gray-900 text-gray-400 rounded-md border border-gray-800 group-hover:border-blue-500/30 transition-colors">
-            {t}
-          </span>
-        ))}
-      </div>
     </div>
-    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{title}</h3>
+    
+    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{title}</h3>
+    
+    {/* Fixed Tag Layout: Moved tags below the title and removed awkward right-wrapping */}
+    <div className="flex gap-2 flex-wrap mb-4">
+      {tech.map((t, i) => (
+        <span key={i} className="text-[10px] uppercase tracking-wider font-mono px-2 py-1 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20 transition-colors">
+          {t}
+        </span>
+      ))}
+    </div>
+
     <p className="text-gray-400 text-sm mb-6 flex-grow group-hover:text-gray-300 transition-colors">{description}</p>
+    
     <div className="space-y-2 mt-auto">
       {features.map((f, i) => (
         <div key={i} className="flex items-start gap-2 text-sm text-gray-300 font-mono">
@@ -385,47 +391,64 @@ const Projects = () => (
       <Reveal delay={0.1} className="lg:col-span-3">
         <motion.div 
           whileHover={{ scale: 1.01 }}
-          className="bg-gradient-to-br from-gray-900 to-gray-950 border border-emerald-500/40 rounded-xl p-1 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.15)] group"
+          className="bg-gradient-to-br from-gray-900 to-gray-950 border border-emerald-500/40 rounded-xl p-1 relative shadow-[0_0_30px_rgba(16,185,129,0.15)] group"
         >
-          <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div className="absolute top-0 right-0 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg z-10 shadow-[0_0_10px_rgba(16,185,129,0.5)]">FEATURED SYSTEM</div>
-          <div className="bg-gray-950 rounded-lg p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
-            <div className="flex-1">
+          {/* Prevent clipping inner content but keep corners rounded */}
+          <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          </div>
+          
+          <div className="absolute top-0 right-0 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl z-20 shadow-[0_0_10px_rgba(16,185,129,0.5)]">FEATURED SYSTEM</div>
+          
+          <div className="bg-gray-950 rounded-lg p-6 md:p-8 flex flex-col lg:flex-row gap-8 relative z-10">
+            {/* Left Side: Adjusted to 60% width on large screens */}
+            <div className="w-full lg:w-3/5">
               <div className="flex items-center gap-3 mb-4">
                 <Activity className="text-emerald-400" size={28} />
                 <h3 className="text-2xl font-bold text-white">Smart Agro System</h3>
               </div>
-              <p className="text-gray-400 mb-6">A full-stack agricultural intelligence platform integrating machine learning diagnostics with simulated IoT environmental data.</p>
+              <p className="text-gray-400 mb-6 leading-relaxed">A full-stack agricultural intelligence platform integrating machine learning diagnostics with simulated IoT environmental data.</p>
               
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
-                  <Server size={16} className="text-emerald-500" />
+              {/* Fixed Stack Tags: Replaced massive block elements with sleek inline pills */}
+              <div className="flex flex-wrap gap-3 mb-6">
+                <div className="inline-flex items-center gap-2 text-xs text-gray-300 font-mono bg-gray-900 px-3 py-2 rounded-md border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                  <Server size={14} className="text-emerald-500" />
                   <span>React + Flask Architecture</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
-                  <Cpu size={16} className="text-emerald-500" />
-                  <span>AI Model (.h5) for Leaf Disease Detection</span>
+                <div className="inline-flex items-center gap-2 text-xs text-gray-300 font-mono bg-gray-900 px-3 py-2 rounded-md border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                  <Cpu size={14} className="text-emerald-500" />
+                  <span>AI Model (.h5)</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-mono bg-gray-900 p-3 rounded border border-gray-800 hover:border-emerald-500/50 transition-colors">
-                  <Thermometer size={16} className="text-emerald-500" />
-                  <span>Sensor Data Simulation (Temp, Humidity)</span>
+                <div className="inline-flex items-center gap-2 text-xs text-gray-300 font-mono bg-gray-900 px-3 py-2 rounded-md border border-gray-800 hover:border-emerald-500/50 transition-colors">
+                  <Thermometer size={14} className="text-emerald-500" />
+                  <span>Sensor Data Simulation</span>
                 </div>
               </div>
             </div>
             
-            <div className="flex-1 flex flex-col justify-center bg-gray-900/50 rounded-lg border border-gray-800 p-6 relative overflow-hidden group-hover:border-emerald-500/30 transition-colors">
+            {/* Right Side: Redesigned visually to look like a mini dashboard rather than empty box */}
+            <div className="w-full lg:w-2/5 flex flex-col justify-center bg-gray-900/50 rounded-lg border border-gray-800 p-6 relative group-hover:border-emerald-500/30 transition-colors overflow-hidden">
                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-30 rounded-lg"></div>
-               <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent"></div>
-               <div className="relative z-10 text-center">
-                  <motion.div 
-                    whileHover={{ scale: 1.1, rotate: 180 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-16 h-16 rounded-full border-2 border-dashed border-emerald-500/50 flex items-center justify-center mx-auto mb-4 bg-gray-950 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
-                  >
-                    <Upload size={24} className="text-emerald-400" />
-                  </motion.div>
-                  <p className="font-mono text-sm text-emerald-400 mb-2">Image Upload → Prediction Flow</p>
-                  <p className="text-xs text-gray-500">Integrated Crop Health Analysis Dashboard</p>
+               
+               {/* Dashboard internal UI window */}
+               <div className="relative z-10 bg-gray-950/80 backdrop-blur border border-gray-800 rounded-lg shadow-xl w-full max-w-sm mx-auto">
+                 <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-800 bg-gray-900/50 rounded-t-lg">
+                   <div className="w-2 h-2 rounded-full bg-red-500/80"></div>
+                   <div className="w-2 h-2 rounded-full bg-yellow-500/80"></div>
+                   <div className="w-2 h-2 rounded-full bg-emerald-500/80"></div>
+                   <span className="text-[10px] font-mono text-gray-500 ml-2">diagnostic_pipeline.exe</span>
+                 </div>
+                 <div className="p-6 text-center">
+                    <motion.div 
+                      whileHover={{ scale: 1.1, rotate: 180 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-12 h-12 rounded-full border border-dashed border-emerald-500/50 flex items-center justify-center mx-auto mb-3 bg-emerald-500/5 shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-pointer"
+                    >
+                      <Upload size={18} className="text-emerald-400" />
+                    </motion.div>
+                    <p className="font-mono text-xs text-emerald-400 mb-1">Image Upload → Prediction Flow</p>
+                    <p className="text-[10px] text-gray-500">Live Health Analysis Feed</p>
+                 </div>
                </div>
             </div>
           </div>
@@ -649,9 +672,9 @@ const EducationTimeline = () => {
 
 const Certifications = () => {
   const credentials = [
-    { title: "State-Level TECHNOVATION", issuer: "Sardar Patel University", date: "Jan 2026", link: "#" },
-    { title: "AWS Academy Graduate", subtitle: "Cloud Foundations", issuer: "Amazon Web Services", date: "Mar 2026", link: "#" },
-    { title: "CVMU Hackathon 2024", issuer: "A.D Patel Institute of Technology", date: "Mar 2024", link: "#" }
+    { title: "State-Level TECHNOVATION", issuer: "Sardar Patel University", date: "Jan 2026", link: "https://drive.google.com/file/d/10NEUUAfvfJk1lQT3dcel9nOlRhk_oNSm/view?usp=sharing" },
+    { title: "AWS Academy Graduate", subtitle: "Cloud Foundations", issuer: "Amazon Web Services", date: "Mar 2026", link: "https://drive.google.com/file/d/10RPTX7mbcdQTuf5ieTr918snvtGyEn23/view?usp=sharing" },
+    { title: "CVMU Hackathon 2024", issuer: "A.D Patel Institute of Technology", date: "Mar 2024", link: "https://drive.google.com/file/d/1pEz1Nxk83829SMdqHL-3FTMWSDizBjcL/view?usp=sharing" }
   ];
 
   return (

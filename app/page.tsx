@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   Terminal, Download, Activity, Upload, Thermometer, Droplets, 
   Code, Cpu, Database, Eye, ShieldAlert, Mail, MapPin, 
-  ChevronRight, CheckCircle2, Server, Menu, X, Send
+  ChevronRight, CheckCircle2, Server, Menu, X, Send, Award, ExternalLink
 } from 'lucide-react';
 
 // --- Types & Interfaces ---
@@ -109,6 +109,7 @@ const Navbar = () => {
     { name: '/skills', href: '#skills' },
     { name: '/projects', href: '#projects' },
     { name: '/demo', href: '#demo' },
+    { name: '/credentials', href: '#credentials' },
     { name: '/contact', href: '#contact' }
   ];
 
@@ -447,6 +448,20 @@ const Projects = () => (
 
       <Reveal delay={0.3}>
         <ProjectCard 
+          title="IoT Telemetry Network"
+          tech={['ESP32', 'MQTT', 'React']}
+          description="Real-time environmental monitoring array utilizing microcontrollers to stream sensor telemetry to a centralized dashboard."
+          features={[
+            "ESP32 hardware integration",
+            "Low-latency MQTT pub/sub protocol",
+            "Live data visualization frontend"
+          ]}
+          icon={<Cpu size={24} />}
+        />
+      </Reveal>
+
+      <Reveal delay={0.4}>
+        <ProjectCard 
           title="Malware Detection Engine"
           tech={['Python', 'ML', 'Security']}
           description="Email-based security system utilizing pattern filtering to block malicious content."
@@ -632,6 +647,53 @@ const EducationTimeline = () => {
   );
 };
 
+const Certifications = () => {
+  const credentials = [
+    { title: "State-Level TECHNOVATION", issuer: "Sardar Patel University", date: "Jan 2026", link: "#" },
+    { title: "AWS Academy Graduate", subtitle: "Cloud Foundations", issuer: "Amazon Web Services", date: "Mar 2026", link: "#" },
+    { title: "CVMU Hackathon 2024", issuer: "A.D Patel Institute of Technology", date: "Mar 2024", link: "#" }
+  ];
+
+  return (
+    <section id="credentials" className="py-24 px-4 bg-gray-900/30 border-t border-gray-800 scroll-mt-28">
+      <div className="max-w-4xl mx-auto">
+        <Reveal>
+          <div className="mb-10 flex items-center gap-3">
+            <Award className="text-emerald-500" size={28} />
+            <h2 className="text-3xl font-bold text-white font-mono">Verified Credentials</h2>
+          </div>
+        </Reveal>
+
+        <div className="space-y-4">
+          {credentials.map((cred, i) => (
+            <Reveal key={i} delay={i * 0.1}>
+              <motion.a 
+                href={cred.link}
+                target="_blank"
+                rel="noreferrer"
+                whileHover={{ scale: 1.01, x: 5 }}
+                className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 bg-gray-950 border border-gray-800 rounded-lg hover:border-emerald-500/50 group transition-all"
+              >
+                <div>
+                  <h3 className="text-white font-bold text-lg flex items-center gap-2 group-hover:text-emerald-400 transition-colors">
+                    {cred.title}
+                    <ExternalLink size={14} className="text-gray-600 group-hover:text-emerald-500 transition-colors opacity-0 group-hover:opacity-100" />
+                  </h3>
+                  {cred.subtitle && <p className="text-emerald-500/80 text-sm font-mono mt-1">{cred.subtitle}</p>}
+                  <p className="text-gray-500 text-sm mt-1">{cred.issuer}</p>
+                </div>
+                <div className="mt-3 sm:mt-0 font-mono text-sm px-3 py-1 bg-gray-900 border border-gray-800 rounded text-gray-400">
+                  {cred.date}
+                </div>
+              </motion.a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const ContactSection = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSending, setIsSending] = useState(false);
@@ -719,13 +781,14 @@ const Footer = () => (
   <footer className="bg-black py-8 border-t border-gray-900 text-center relative overflow-hidden">
     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-emerald-500/5 blur-[50px] pointer-events-none"></div>
     <div className="flex justify-center gap-6 mb-6 relative z-10">
-      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="mailto:contact@example.com" className="text-gray-500 hover:text-emerald-400 transition-colors">
+      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="mailto:tahir786605@gmail.com" className="text-gray-500 hover:text-emerald-400 transition-colors">
         <Mail size={22} />
       </motion.a>
-      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="https://github.com" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-white transition-colors">
+      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="https://github.com/TAHIRDON" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-white transition-colors">
         <GithubIcon size={22} />
       </motion.a>
-      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-blue-500 transition-colors">
+      {/* UPDATE YOUR LINKEDIN URL HERE */}
+      <motion.a whileHover={{ y: -5, scale: 1.1 }} href="https://www.linkedin.com/in/tahir-miya-a26089399" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-blue-500 transition-colors">
         <LinkedinIcon size={22} />
       </motion.a>
     </div>
@@ -765,6 +828,7 @@ export default function App() {
         <Projects />
         <InteractiveDemo />
         <EducationTimeline />
+        <Certifications />
         <ContactSection showToast={showToast} />
       </main>
       <Footer />
